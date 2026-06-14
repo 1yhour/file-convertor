@@ -1,12 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
 
 use App\Http\Requests\StoreConversionHistoryRequest;
 use App\Http\Requests\UpdateConversionHistoryRequest;
 use App\Models\ConversionHistory;
 
-class ConversionHistoryController
+class ConversionHistoryController extends Controller
 {
     /**
      * Display a listing of the resource.
