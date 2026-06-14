@@ -19,12 +19,15 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->alias([
             'verified' => \App\Http\Middleware\EnsureEmailIsVerified::class,
+            'admin'    => \App\Http\Middleware\EnsureIsAdmin::class,
         ]);
 
         //
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
-            fn (Request $request) => $request->is('api/*'),
+            fn (Request $request) => $request->is('api/*') ||
+                $request->is('login', 'register', 'logout', 'forgot-password', 'reset-password') ||
+                $request->expectsJson()
         );
     })->create();
