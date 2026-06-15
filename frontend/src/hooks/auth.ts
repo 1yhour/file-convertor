@@ -28,12 +28,12 @@ export const useAuth = ({
   const {
     data: user,
     error,
-    mutate,
+    mutate,   //a function that use to call later to manually re-fetch the user data (for example, immediately after they log out or update their profile).
   } = useSWR<AuthUser | undefined>("/api/user", async (): Promise<AuthUser | undefined> => {
     try {
       const response = await axios.get("/api/user");
 
-      return response.data as AuthUser;
+      return response.data as AuthUser; // if successed it return data as AuthUser type
     } catch (error: any) {
       // 409 means email not verified — surface it, don't swallow
       if (error.response?.status !== 409) throw error;
