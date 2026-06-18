@@ -3,12 +3,16 @@
 namespace App\Jobs;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Bus\Queueable;
 use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Bus\InteractsWithQueue;
+use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use App\Models\ConversionJob;
 use App\Events\ConversionStarted;
+use App\Events\ConversionCompleted;
+use App\Events\ConversionFailed;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 class ConvertFileJob implements ShouldQueue
 {
     use Queueable, Dispatchable, InteractsWithQueue, SerializesModels;
@@ -29,42 +33,35 @@ class ConvertFileJob implements ShouldQueue
     public function handle(): void
     {
         $this->conversionJob->update([
-            'status' => $this->status,
-            'started_at' => $this->now(),
-            'attempts' => $this->conversionJob->attempts + 1,
+            'status' => 'processing',
         ]);
         
-        broadcast(new ConversionStarted($this->conversionJob)->via('reverb'));
+        broadcast(new ConversionStarted($this->conversionJob));
         try{
              // Phase 1 will fill this in with the CloudConvert API call
             // For now just simulate success after a short delay
-            sleep(2);
+            sleep(5);
             $this->conversionJob->update([
-                'status' => $this->status,
-                'completed_at' => now(),
-                'expires_at'   => now()->addHours(24),
-                'download_url' => '/api/conversions/' . $this->conversionJob->id . '/download',
+                'status' => 'completed',
             ]);
-            broadcast(new ConversionCompleted($this->conversionJob)->via('reverb'));
+            broadcast(new ConversionCompleted($this->conversionJob));
         }catch(Throwable $e){
             Log::error('Conversion Failed',[
                 'job_id' => $this->conversionJob->id,
                 'error'=> $e->getMessage()
             ]);
             $this->conversionJob->update([
-                'status' => $this->status,
-                'error_message' => $e->getMessage()
+                'status' => 'failed',
             ]);
-            broadcast(new ConversionFailed($this->conversionJob)->via('reverb'));
+            broadcast(new ConversionFailed($this->conversionJob));
             //let laravel handle retried
             throw $e;
         }
     }
     public function failed(Throwable $e) :void{
         $this->conversionJob->update([
-            'status' => $this->status,
-            'error_message' => 'Job Failed after' . $this->tired . 'attempts: ' . $e->getMessage(),
+            'status' => 'failed',
         ]);
-        broadcast(new ConversionFailed($this->conversionJob)->via('reverb'));
+        broadcast(new ConversionFailed($this->conversionJob));
     }
 }

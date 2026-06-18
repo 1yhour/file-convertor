@@ -38,7 +38,7 @@ class ConversionFailed implements ShouldBroadcast
     {
         return [
             'job_id' => $this->job->id,
-            'status' => $this->job->status,
+            'status' => "failed",
             'error' => $this->job->error_message
         ];
     }

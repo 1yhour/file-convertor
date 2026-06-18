@@ -9,6 +9,11 @@ Route::middleware(['auth:sanctum'])->get('/user', function (Request $request) {
     return $request->user();
 });
 
+// Get specific user by ID
+Route::middleware(['auth:sanctum'])->get('/users/{user}', function (\App\Models\User $user) {
+    return $user;
+});
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Admin Routes — requires auth:sanctum + admin role
 // ─────────────────────────────────────────────────────────────────────────────

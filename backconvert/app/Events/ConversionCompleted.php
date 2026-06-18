@@ -37,7 +37,7 @@ class ConversionCompleted implements ShouldBroadcast
     public function broadcastWith(): array{
         return [
             'job_id' => $this->job->id,
-            'status' => $this->job->status,
+            'status' => "completed",
             'input_format' => $this->job->input_format,
             'output_format' => $this->job->output_format
         ];
