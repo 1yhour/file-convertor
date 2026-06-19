@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('conversion_jobs', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->foreignUuid('user_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignUuid('user_id')->nullable()->constrained('users')->nullOnDelete();
             $table->string('cloudconvert_job_id')->nullable();
             $table->string('input_format');
             $table->string('output_format');

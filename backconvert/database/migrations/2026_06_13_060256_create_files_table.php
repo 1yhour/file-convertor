@@ -19,8 +19,8 @@ return new class extends Migration
             $table->string('stored_name');
             $table->string('mime_type');
             $table->integer('size');
-            $table->string('s3_key');
-            $table->string('download_url');
+            $table->string('s3_key')->nullable();
+            $table->string('download_url')->nullable();
             $table->timestamps();
         });
     }
