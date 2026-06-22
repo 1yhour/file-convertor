@@ -96,13 +96,21 @@ class ConversionController extends Controller
             
         return response()->json($jobs);
     }
-
-    /**
-     * Download the converted file.
-     */
     public function download(Request $request, $jobId)
     {
-        // To be implemented in the next phase
-        return response()->json(['message' => 'Not implemented yet'], 501);
+        $job = ConversionJob::FindOrFail($jobId);
+
+        if($job->status !== 'completed')
+            return response()->json([
+                'message' => 'Conversion is not completed yet.'
+            ], 400);
+        $outputFile = $job->file()->where('file_type', 'output')->first();
+
+        if(!$outputFile || !Storage::exists($outputFile->stored_name))
+            return response()->json([
+                'message' => 'Output file not found.'
+            ], 404);
+        return Storage::download($outputFile->stored_name, $outputFile->original_name);
     }
+
 }

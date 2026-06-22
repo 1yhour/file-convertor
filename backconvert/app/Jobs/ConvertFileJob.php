@@ -49,10 +49,11 @@ class ConvertFileJob implements ShouldQueue
                 throw new Exception('Input file not found for conversion job.');
             }
 
-            // Create a read stream from the storage disk (works for local and S3)
-            $fileStream = Storage::readStream($inputFile->stored_name);
+            // Create a read stream from the storage disk using native fopen
+            $filePath = Storage::path($inputFile->stored_name);
+            $fileStream = fopen($filePath, 'r');
             if (!$fileStream) {
-                throw new Exception('Could not open file stream for upload.');
+                throw new Exception("Could not open file stream for upload at path: $filePath");
             }
 
             // 2. Define the CloudConvert Job and its Tasks
@@ -78,16 +79,32 @@ class ConvertFileJob implements ShouldQueue
 
             // 4. Upload the file to CloudConvert Server using the stream
             $uploadTask = $job->getTasks()->whereName('import-1')[0];
-            CloudConvert::tasks()->upload($uploadTask, $fileStream);
+            CloudConvert::tasks()->upload($uploadTask, $fileStream, $inputFile->original_name);
 
             // 5. Wait for the conversion to finish
-            CloudConvert::jobs()->wait($job);
+            $job = CloudConvert::jobs()->wait($job);
+
+            // Check if the job failed
+            if ($job->getStatus() === 'error') {
+                $errorMsgs = [];
+                foreach ($job->getTasks() as $task) {
+                    if ($task->getStatus() === 'error') {
+                        $errorMsgs[] = $task->getName() . ' failed: ' . $task->getMessage();
+                    }
+                }
+                throw new Exception("CloudConvert Job failed. Details: " . implode(' | ', $errorMsgs));
+            }
 
             // 6. Download the converted file
             $exportTask = $job->getTasks()->whereName('export-1')[0];
             $fileTask = CloudConvert::tasks()->wait($exportTask);
 
-            $cloudConvertFile = $fileTask->getResult()->files[0];
+            $result = $fileTask->getResult();
+            if (!$result || !isset($result->files[0])) {
+                throw new Exception("CloudConvert Export task finished but no files were returned.");
+            }
+
+            $cloudConvertFile = $result->files[0];
             $downloadUrl = $cloudConvertFile->url;
 
             $newStoredName = "conversions/{$this->conversionJob->id}/converted_" . $cloudConvertFile->filename;
@@ -104,6 +121,7 @@ class ConvertFileJob implements ShouldQueue
                 'file_type' => 'output',
                 'original_name' => $cloudConvertFile->filename,
                 'stored_name' => $newStoredName,
+                'mime_type' => Storage::mimeType($newStoredName) ?: 'application/octet-stream',
                 'size' => $cloudConvertFile->size,
             ]);
 
