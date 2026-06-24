@@ -128,3 +128,6 @@
     @apply font-sans;
   }
 }
+  @theme{
+    --font-sans: var(--font-inter),ui-sans-serif,system-ui,sans-serif;
+  }

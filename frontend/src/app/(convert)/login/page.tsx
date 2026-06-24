@@ -68,22 +68,22 @@ export default function LoginPage() {
   return (
     <div className="min-h-[calc(100vh-4rem)] flex items-center justify-center bg-zinc-50 p-4">
       <div className="w-full max-w-md bg-white rounded-3xl shadow-xl overflow-hidden border border-zinc-100">
-        <div className="p-8 sm:p-12">
+        <div className="p-6 sm:p-8">
           
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold tracking-tight text-zinc-900 mb-2">Welcome Back</h1>
+          <div className="text-center mb-6">
+            <h1 className="text-2xl font-bold tracking-tight text-zinc-900 mb-2">Welcome Back</h1>
             <p className="text-sm text-zinc-500">Please enter your details to sign in.</p>
           </div>
 
           {errors.general && (
-            <div className="mb-6 p-4 bg-red-50 text-red-600 rounded-2xl text-sm font-medium border border-red-100 flex items-center justify-center">
+            <div className="mb-6 p-3 bg-red-50 text-red-600 rounded-lg text-sm font-medium border border-red-100 flex items-center justify-center">
               {errors.general}
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-xs font-medium text-zinc-700 uppercase tracking-wider mb-2">
+              <label htmlFor="email" className="block text-xs font-medium text-zinc-700 uppercase tracking-wider mb-1.5">
                 Email Address
               </label>
               <input
@@ -93,14 +93,14 @@ export default function LoginPage() {
                 value={formData.email}
                 onChange={handleChange}
                 disabled={isLoading}
-                className="block w-full rounded-2xl border-zinc-200 bg-zinc-50 px-4 py-3.5 text-zinc-900 focus:border-black focus:bg-white focus:ring-1 focus:ring-black transition-colors disabled:opacity-50"
+                className="block w-full rounded-lg border-zinc-200 bg-zinc-50 px-3 py-2.5 text-zinc-900 focus:border-black focus:bg-white focus:ring-1 focus:ring-black transition-colors disabled:opacity-50"
                 placeholder="you@example.com"
               />
               {errors.email && <p className="text-red-500 text-xs mt-1.5 font-medium">{errors.email}</p>}
             </div>
 
             <div>
-              <div className="flex items-center justify-between mb-2">
+              <div className="flex items-center justify-between mb-1.5">
                 <label htmlFor="password" className="block text-xs font-medium text-zinc-700 uppercase tracking-wider">
                   Password
                 </label>
@@ -116,13 +116,13 @@ export default function LoginPage() {
                   value={formData.password}
                   onChange={handleChange}
                   disabled={isLoading}
-                  className="block w-full rounded-2xl border-zinc-200 bg-zinc-50 px-4 py-3.5 pr-12 text-zinc-900 focus:border-black focus:bg-white focus:ring-1 focus:ring-black transition-colors disabled:opacity-50"
+                  className="block w-full rounded-lg border-zinc-200 bg-zinc-50 px-3 py-2.5 pr-10 text-zinc-900 focus:border-black focus:bg-white focus:ring-1 focus:ring-black transition-colors disabled:opacity-50"
                   placeholder="••••••••"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 transition-colors focus:outline-none"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-zinc-600 transition-colors focus:outline-none"
                   tabIndex={-1}
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -134,7 +134,7 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={isLoading}
-              className="w-full mt-8 bg-black text-white font-medium text-sm py-4 rounded-2xl hover:bg-zinc-800 transition-all active:scale-[0.98] disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-2 shadow-lg shadow-zinc-200"
+              className="w-full mt-6 bg-red-500 text-white font-medium text-sm py-2.5 rounded-lg hover:bg-red-600 transition-colors active:scale-[0.98] disabled:opacity-50 disabled:active:scale-100 flex items-center justify-center gap-2 shadow-sm"
             >
               {isLoading ? (
                 <>
