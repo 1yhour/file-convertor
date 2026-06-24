@@ -96,6 +96,7 @@ class ConversionController extends Controller
             
         return response()->json($jobs);
     }
+
     public function download(Request $request, $jobId)
     {
         $job = ConversionJob::FindOrFail($jobId);

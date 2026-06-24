@@ -28,13 +28,13 @@ class ConversionCompleted implements ShouldBroadcast
      *
      * @return array<int, Channel>
      */
-    public function broadcastOn(): array
+    public function broadcastOn(): array       //Where to send it
     {
         return [
             new PrivateChannel('user.' . $this->job->user_id),
         ];
     }
-    public function broadcastWith(): array{
+    public function broadcastWith(): array{     //What data to send
         return [
             'job_id' => $this->job->id,
             'status' => "completed",
@@ -42,7 +42,7 @@ class ConversionCompleted implements ShouldBroadcast
             'output_format' => $this->job->output_format
         ];
     }
-    public function broadcastAs(): string{
+    public function broadcastAs(): string{      //The event name on the frontend
         return 'conversion.completed';
     }
 }
