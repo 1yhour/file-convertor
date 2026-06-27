@@ -16,17 +16,18 @@ import {
     DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Label } from "../ui/label";
+import { useRouter } from "next/navigation";
 const fetcher = (url: string) => axios.get(url).then((res) => res.data);
 
 export default function Header() {
     const [isDark, setIsDark] = useState(false);
     const { data: user, isLoading, mutate } = useSWR('/api/user', fetcher);
-
+    const router = useRouter();
     const handleLogout = async () => {
         try {
             await axios.post('/logout');
             mutate(null);
-            window.location.href = '/login';
+            router.push('/login');
         } catch (error) {
             console.error('Logout failed', error);
         }
