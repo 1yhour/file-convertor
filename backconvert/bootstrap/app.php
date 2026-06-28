@@ -24,6 +24,10 @@ return Application::configure(basePath: dirname(__DIR__))
             'verified' => EnsureEmailIsVerified::class,
             'admin'    => EnsureIsAdmin::class,
         ]);
+
+        $middleware->validateCsrfTokens(except: [
+            'api/convert/upload',
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

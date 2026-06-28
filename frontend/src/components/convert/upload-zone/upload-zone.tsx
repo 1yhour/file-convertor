@@ -145,22 +145,23 @@ export function UploadZone({
         try {
           const form = new FormData();
           form.append("file", item.file);
-          form.append("target_format", item.targetFormat);
+          form.append("output_format", item.targetFormat);
           form.append("source_mime", item.sourceMime);
 
-          const res = await fetch("http://localhost:8000/api/convert/upload", {
+          const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:80";
+          const res = await fetch(`${backendUrl}/api/convert/upload`, {
             method: "POST",
             body: form,
           });
           if (!res.ok) throw new Error(`Server error: ${res.status}`);
 
           const data = await res.json();
-          if (!data.jobId) throw new Error("No job ID returned");
+          if (!data.job_id) throw new Error("No job ID returned");
 
           setFileItems((prev) =>
             prev.map((f) =>
               f.id === item.id
-                ? { ...f, status: "queued", jobId: data.jobId, progress: 0 }
+                ? { ...f, status: "queued", jobId: data.job_id, progress: 0 }
                 : f
             )
           );

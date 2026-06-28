@@ -31,18 +31,17 @@ class ConversionFailed implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('user.' . $this->job->user_id),
+            new Channel('job.' . $this->job->id),
         ];
     }
     public function broadcastWith(): array
     {
         return [
-            'job_id' => $this->job->id,
             'status' => "failed",
-            'error' => $this->job->error_message
+            'error' => $this->job->error_message ?? "Conversion failed"
         ];
     }
     public function broadcastAs(): string{
-        return 'conversion.failed';
+        return 'ConvertProgressUpdated';
     }
 }

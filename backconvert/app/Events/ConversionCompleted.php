@@ -31,18 +31,17 @@ class ConversionCompleted implements ShouldBroadcast
     public function broadcastOn(): array       //Where to send it
     {
         return [
-            new PrivateChannel('user.' . $this->job->user_id),
+            new Channel('job.' . $this->job->id),
         ];
     }
     public function broadcastWith(): array{     //What data to send
         return [
-            'job_id' => $this->job->id,
-            'status' => "completed",
-            'input_format' => $this->job->input_format,
-            'output_format' => $this->job->output_format
+            'status' => "done",
+            'progress' => 100,
+            'downloadUrl' => env('APP_URL', 'http://localhost') . '/api/convert/download/' . $this->job->id
         ];
     }
     public function broadcastAs(): string{      //The event name on the frontend
-        return 'conversion.completed';
+        return 'ConvertProgressUpdated';
     }
 }

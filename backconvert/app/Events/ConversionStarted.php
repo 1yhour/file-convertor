@@ -31,18 +31,16 @@ class ConversionStarted implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('user.' . $this->job->user_id),
+            new Channel('job.' . $this->job->id),
         ];
     }
     public function broadcastWith(): array{
         return [
-            'job_id' => $this->job->id,
             'status' => "processing",
-            'input_format' => $this->job->input_format,
-            'output_format' => $this->job->output_format
+            'progress' => 0
         ];
     }
     public function broadcastAs(): string{
-        return 'conversion.started';
+        return 'ConvertProgressUpdated';
     }
 }
